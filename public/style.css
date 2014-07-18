@@ -1,0 +1,21 @@
+.content{
+  margin-top: 55px
+}
+
+.actions{
+  text-align: center;
+  margin-bottom: 5px
+}
+
+.graph{
+  height:1000px;
+  width:1000px;
+}
+
+.graph canvas{
+  z-index: 10;
+}
+
+.content #map{
+  height: 100%;
+}

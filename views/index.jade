@@ -1,0 +1,21 @@
+header
+body
+  include includes/navbar.jade
+  
+  .content
+    .actions
+      if(page-1>=0)
+        a.btn.btn-default(href="/images?page="+(page-1)) Prev
+      a.btn.btn-default(href="/images?page="+(page+1)) Next
+
+    .images
+      each v,k in images
+        img(src=v.url_z alt="immagine" id=v._id data-toggle="modal" href="#test_modal")
+        include details.jade
+        //a(href="/images/"+v._id)
+
+link(rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css")
+link(rel="stylesheet" href="style.css")
+script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
+script(src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
+script(src="/javascript/index.js")

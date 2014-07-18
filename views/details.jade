@@ -1,0 +1,21 @@
+.modal.fade(id="details_"+v._id)
+ .modal-dialog
+  .modal-content
+    .modal-header
+        button(type="button" class="close" data-dismiss="modal")
+          span(aria-hidden="true") Close
+        h4.modal-title.lead=v.title
+      .modal-body
+        h6.lead Description
+        .description=v.description._content
+        h6.lead Geo
+        .geolocalization
+          p= v.latitude
+          p= v.longitude
+        h6.lead Tags
+        .tags=v.tags
+        .tags=v.machine_tags
+        h6.lead Original url
+        .url=v.url_o
+      .modal-footer
+        button(type="button" class="btn btn-default" data-dismiss="modal") Close

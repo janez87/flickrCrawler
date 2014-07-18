@@ -4,20 +4,27 @@ var fs = require('fs');
 var Promise = require('bluebird');
 var mongoose = require('mongoose');
 
+
+
 Promise.promisifyAll(Flickr);
 Promise.promisifyAll(mongoose);
 
 //Configuration
 var conf = require('./configuration/conf.json');
+var yesterday = 1405555200;
+var now = new Date().getTime() / 1000;
+console.log(now);
 var options = {
-  extras: ['description', 'license', 'date_upload', 'date_taken', 'owner_name', 'icon_server', 'original_format', 'last_update', 'geo', 'tags', 'machine_tags', 'o_dims', 'views', 'media', 'url_o'],
-  //lat: conf.lat,
-  //lon: conf.lon,
-  text: 'milan',
+  extras: ['description', 'license', 'date_upload', 'date_taken', 'owner_name', 'icon_server', 'original_format', 'last_update', 'geo', 'tags', 'machine_tags', 'o_dims', 'views', 'media', 'url_o', 'url_sq', 'url_t', 'url_s', 'url_q', 'url_m', 'url_n', 'url_z', 'url_c', 'url_l'],
+  lat: conf.lat,
+  lon: conf.lon,
+  //text: 'milan',
   //place_id: '49Gidk1WU7JxrFY',
   //radius: 10,
-  per_page: 500,
-  has_geo: '1'
+  per_page: 250,
+  //has_geo: '0',
+  max_upload_date: now,
+  min_upload_date: yesterday
 };
 
 //Mongo stuff
@@ -26,7 +33,10 @@ mongoose.connect(conf.db);
 var db = mongoose.connection;
 
 var ImageSchema = new mongoose.Schema({
-  id: String,
+  id: {
+    type: String,
+    unique: true
+  },
   owner: String,
   secret: String,
   server: String,
@@ -55,7 +65,8 @@ var ImageSchema = new mongoose.Schema({
   context: Number,
   media: String,
   media_status: String,
-  url_o: String
+  url_o: String,
+  url_z: String
 });
 
 console.log('Loading the schema');
@@ -81,13 +92,13 @@ var firstDownload = function(flickr) {
         return resolve(results);
       });
     })
-    .then(savePhoto);
+    //.then(savePhoto);
 
 };
 
 var createPromise = function() {
   var tasks = [];
-  for (var i = 2; i <= pages; i++) {
+  for (var i = 1; i <= pages; i++) {
     options.page = i;
     tasks.push(_flickr.photos.searchAsync(options)
       .then(savePhoto));
@@ -97,8 +108,10 @@ var createPromise = function() {
 
 var savePhoto = function(result) {
   var photos = result.photos.photo;
-  console.log('Saving ' + photos.length + ' photos of page' + result.photos.page + 'over ' + result.photos.pages + ' pages');
-  return mongoose.model('image').collection.insertAsync(photos);
+  console.log('Saving ' + photos.length + ' photos of page ' + result.photos.page + ' over ' + result.photos.pages + ' pages');
+  return mongoose.model('image').collection.insertAsync(photos, {
+    keepGoing: true
+  });
 };
 
 

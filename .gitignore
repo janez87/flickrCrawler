@@ -29,3 +29,6 @@ configuration/
 
 #flickr stuff
 data/
+
+#osx stuff
+.DS_store

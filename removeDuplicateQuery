@@ -1,0 +1,12 @@
+([
+  { $group: {
+    _id: { name: "$id" },   // replace `name` here twice
+    uniqueIds: { $addToSet: "$_id" },
+    count: { $sum: 1 } 
+  } }, 
+  { $match: { 
+    count: { $gte: 2 } 
+  } },
+  { $sort : { count : -1} },
+  { $limit : 10 }
+]);
