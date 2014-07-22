@@ -1,7 +1,20 @@
+function addInfoWindow(map, marker, message) {
+  var info = message;
+
+  var infoWindow = new google.maps.InfoWindow({
+    content: message
+  });
+
+  google.maps.event.addListener(marker, 'click', function() {
+    infoWindow.open(map, marker);
+  });
+}
+
+
 window.onload = function() {
 
 
-  $.ajax('http://localhost:3000/locations')
+  $.ajax('http://localhost:3000/imagesLocation')
     .done(function(result) {
 
       var $map = $('#map');
@@ -12,47 +25,20 @@ window.onload = function() {
       };
 
       var googleMap = new google.maps.Map($map[0], mapOptions);
-      /*var infoWindow = new google.maps.InfoWindow();
-      for (var i = 0; i < result.length; i++) {
-        var marker;
-        var location = result[i];
-
-        var lat = location._id.latitude;
-        var lon = location._id.longitude;
-        var count = location.count;
-
-
-        marker = new google.maps.Marker({
-          position: new google.maps.LatLng(lat, lon),
-          map: googleMap
-        });
-
-        google.maps.event.addListener(marker, 'click', (function(marker, content, infoWindow) {
-          return function() {
-            infoWindow.setContent('' + content);
-            infoWindow.open(googleMap, marker);
-          };
-        })(marker, count, infoWindow));
-
-      }*/
 
       var data = [];
       for (var i = 0; i < result.length; i++) {
         var location = result[i];
 
-        data.push({
-          weight: location.count,
-          location: new google.maps.LatLng(location._id.latitude, location._id.longitude)
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(location.latitude, location.longitude),
+          map: googleMap,
         });
+
+        var url = location.url_o || location.url_z;
+        var message = '<a target="_blank" href="' + url + '"><img src="' + location.url_sq + '"/></a>';
+        addInfoWindow(googleMap, marker, message);
       }
-
-      console.log(data[0]);
-      var heatmap = new google.maps.visualization.HeatmapLayer({
-        data: data,
-        maxIntensity: 30
-      });
-
-      heatmap.setMap(googleMap);
 
     })
     .fail(function(jqXHR, textStatus) {

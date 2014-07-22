@@ -3,6 +3,8 @@ var mongoose = require('mongoose');
 var Promise = require('bluebird');
 var _ = require('underscore');
 
+var Image = require('./model/image');
+
 Promise.promisifyAll(mongoose);
 Promise.promisifyAll(express);
 
@@ -16,7 +18,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/images', function(req, res) {
 
-  var Image = server.Image;
+  //var Image = server.Image;
 
   var perPage = 100;
 
@@ -40,10 +42,39 @@ app.get('/images', function(req, res) {
     });
 });
 
+app.get('/imagesLocation', function(req, res) {
+
+  var query = {
+    loc: {
+      $geoWithin: {
+        $centerSphere: [
+          [9.163999, 45.458159], 10 / 6371
+        ]
+      }
+    }
+  };
+
+  var projection = {
+    url_sq: 1,
+    latitude: 1,
+    longitude: 1,
+    url_o: 1,
+    url_z: 1
+  };
+
+  Image
+    .find(query, projection)
+    .exec(function(err, result) {
+      if (err) return res.send(err);
+
+      return res.json(result);
+    });
+});
+
 app.get('/images/:id', function(req, res) {
 
   var id = req.params.id;
-  server.Image
+  Image
     .findById(id, function(err, image) {
       if (err) res.send(err);
 
@@ -53,11 +84,28 @@ app.get('/images/:id', function(req, res) {
 
 app.get('/tags', function(req, res) {
 
-  server.Image
-    .find()
+  var query = {
+    $or: [{
+      latitude: 0,
+      longitude: 0
+    }, {
+      loc: {
+        $geoWithin: {
+          $centerSphere: [
+            [conf.lon, conf.lat], 20 / 6371
+          ]
+        }
+      }
+    }]
+  };
+
+  Image
+    .find(query)
     .select('tags')
     .exec(function(err, result) {
-      if (err) res.send(err);
+      if (err) return res.send(err);
+
+      //if (!result) result = [];
 
       var count = {};
 
@@ -73,6 +121,7 @@ app.get('/tags', function(req, res) {
 
           // It's an automatic tag
           if (tag.indexOf(':') !== -1) continue;
+          if (tag === 'milan' || tag === 'milano') continue;
 
           if (!count[tag]) {
             count[tag] = 1;
@@ -94,28 +143,14 @@ app.get('/tags', function(req, res) {
 
 app.get('/locations', function(req, res) {
 
-  /*server.Image
-    .find()
-    .where('latitude').ne("0")
-    .where('longitude').ne("0")
-    .select('latitude')
-    .select('longitude')
-    .limit(100)
-    .exec(function(err, result) {
-      if (err) res.send(err);
-
-      console.log(result.length);
-
-      res.json(result);
-    });*/
-
   var query = [{
     $match: {
-      latitude: {
-        $ne: 0
-      },
-      longitude: {
-        $ne: 0
+      loc: {
+        $geoWithin: {
+          $centerSphere: [
+            [conf.lon, conf.lat], 20 / 6371
+          ]
+        }
       }
     }
   }, {
@@ -133,7 +168,7 @@ app.get('/locations', function(req, res) {
       count: -1
     }
   }];
-  server.Image.collection
+  Image.collection
     .aggregate(query, function(err, result) {
       if (err) res.send(err);
 
@@ -147,55 +182,19 @@ app.get('/viewTags', function(req, res) {
   res.render('tags.jade');
 });
 
+app.get('/heatmap', function(req, res) {
+  res.render('heatmap.jade');
+});
+
 app.get('/map', function(req, res) {
   res.render('map.jade');
-})
+});
 
 app.listen(3000, function() {
 
   console.log('Connecting to mongo');
   mongoose.connect(conf.db);
   server.db = mongoose.connection;
-
-  var ImageSchema = new mongoose.Schema({
-    id: {
-      type: String,
-      unique: true
-    },
-    owner: String,
-    secret: String,
-    server: String,
-    farm: Number,
-    title: String,
-    ispublic: Number,
-    isfriend: Number,
-    isfamily: Number,
-    license: String,
-    description: {
-      type: 'mixed'
-    },
-    dateupload: String,
-    lastupdate: String,
-    datetaken: Date,
-    datetakengranularity: String,
-    ownername: String,
-    iconserver: String,
-    iconfarm: Number,
-    views: String,
-    tags: String,
-    machine_tags: String,
-    latitude: Number,
-    longitude: Number,
-    accuracy: Number,
-    context: Number,
-    media: String,
-    media_status: String,
-    url_o: String,
-    url_z: String
-  });
-
-  console.log('Loading the schema');
-  server.Image = mongoose.model('image', ImageSchema);
 
   console.log('Server up on port 3000');
 

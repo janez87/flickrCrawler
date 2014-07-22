@@ -4,7 +4,7 @@ window.onload = function() {
   $.ajax('http://localhost:3000/tags')
     .done(function(result) {
 
-      var $graph = $('.graph');
+      var $graph = $('#graph');
       for (var i in result) {
         if (result.hasOwnProperty(i)) {
           var tag = i;
@@ -17,8 +17,7 @@ window.onload = function() {
       var settings = {
         "size": {
           "grid": 32,
-          "normalize": false,
-          "factor": 0
+          "normalize": true
         },
         "options": {
           "color": "random-dark",
