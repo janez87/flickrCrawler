@@ -1,7 +1,8 @@
+var heatmap;
 window.onload = function() {
 
 
-  $.ajax('http://localhost:3000/locations')
+  $.ajax('http://localhost:3000/imagesLocation')
     .done(function(result) {
 
       var $map = $('#map');
@@ -17,14 +18,18 @@ window.onload = function() {
       for (var i = 0; i < result.length; i++) {
         var location = result[i];
 
-        data.push({
-          weight: location.count,
-          location: new google.maps.LatLng(location._id.latitude, location._id.longitude)
-        });
+
+        if (!location.loc) {
+          continue;
+        }
+        var latitude = location.loc.coordinates[1];
+        var longitude = location.loc.coordinates[0];
+        data.push(
+          new google.maps.LatLng(latitude, longitude)
+        );
       }
 
-      console.log(data[0]);
-      var heatmap = new google.maps.visualization.HeatmapLayer({
+      heatmap = new google.maps.visualization.HeatmapLayer({
         data: data,
         maxIntensity: 100
       });

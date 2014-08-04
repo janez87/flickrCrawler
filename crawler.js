@@ -16,15 +16,15 @@ var now = new Date().getTime() / 1000;
 console.log(now);
 var options = {
   extras: ['description', 'license', 'date_upload', 'date_taken', 'owner_name', 'icon_server', 'original_format', 'last_update', 'geo', 'tags', 'machine_tags', 'o_dims', 'views', 'media', 'url_o', 'url_sq', 'url_t', 'url_s', 'url_q', 'url_m', 'url_n', 'url_z', 'url_c', 'url_l'],
-  lat: conf.lat,
-  lon: conf.lon,
-  //text: 'milan',
+  //lat: conf.lat,
+  //lon: conf.lon,
+  text: 'teatro+la+scala',
   //place_id: '49Gidk1WU7JxrFY',
-  radius: 10,
+  //radius: 10,
   per_page: 250,
   //has_geo: '0',
   max_upload_date: now,
-  min_upload_date: yesterday
+  //min_upload_date: yesterday
 };
 
 //Mongo stuff

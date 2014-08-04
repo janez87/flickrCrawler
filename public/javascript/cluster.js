@@ -1,4 +1,4 @@
-function addInfoWindow(map, marker, message) {
+/*function addInfoWindow(map, marker, message) {
   var info = message;
 
   var infoWindow = new google.maps.InfoWindow({
@@ -8,16 +8,15 @@ function addInfoWindow(map, marker, message) {
   google.maps.event.addListener(marker, 'click', function() {
     infoWindow.open(map, marker);
   });
-}
+}*/
 
 
 window.onload = function() {
 
 
-  $.ajax('http://localhost:3000/imagesLocation')
+  $.ajax('http://localhost:3000/cluster')
     .done(function(result) {
 
-      console.log(result.length);
       var $map = $('#map');
 
       var mapOptions = {
@@ -27,18 +26,15 @@ window.onload = function() {
 
       var googleMap = new google.maps.Map($map[0], mapOptions);
 
-      var data = [];
-      var markers = [];
       console.log(result.length);
+      var data = [];
       for (var i = 0; i < result.length; i++) {
         var location = result[i];
 
-        if (!location.loc) {
-          continue;
-        }
-        var latitude = location.loc.coordinates[1];
-        var longitude = location.loc.coordinates[0];
-        /*var marker = new google.maps.Circle({
+        var latitude = location.centroid.lat;
+        var longitude = location.centroid.lon;
+
+        var marker = new google.maps.Circle({
           center: new google.maps.LatLng(latitude, longitude),
           map: googleMap,
           strokeColor: '#FF0000',
@@ -46,21 +42,14 @@ window.onload = function() {
           strokeWeight: 2,
           fillColor: '#FF0000',
           fillOpacity: 0.35,
-          radius: 15,
+          radius: location.size / 1000,
           position: new google.maps.LatLng(latitude, longitude)
-        });*/
-
-        var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(latitude, longitude),
         });
 
-        var url = location.url_o || location.url_z;
+        /* var url = location.url_o || location.url_z;
         var message = '<a target="_blank" href="' + url + '"><img src="' + location.url_sq + '"/></a>';
-        addInfoWindow(googleMap, marker, message);
-        markers.push(marker);
+        addInfoWindow(googleMap, marker, message);*/
       }
-
-      var markerCluster = new MarkerClusterer(googleMap, markers);
 
     })
     .fail(function(jqXHR, textStatus) {

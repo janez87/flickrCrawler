@@ -12,10 +12,11 @@
   width:1000px;
 }
 
-#graph canvas{
-  z-index: 10;
-}
-
 .content #map{
   height: 100%;
+}
+
+canvas#awesomeCloudgraph {
+border: black;
+border-style: dashed;
 }

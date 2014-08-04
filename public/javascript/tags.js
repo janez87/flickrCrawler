@@ -4,7 +4,9 @@ window.onload = function() {
   $.ajax('http://localhost:3000/tags')
     .done(function(result) {
 
+      console.log(result);
       var $graph = $('#graph');
+
       for (var i in result) {
         if (result.hasOwnProperty(i)) {
           var tag = i;
@@ -16,12 +18,12 @@ window.onload = function() {
 
       var settings = {
         "size": {
-          "grid": 32,
+          "grid": 64,
           "normalize": true
         },
         "options": {
           "color": "random-dark",
-          "printMultiplier": 3
+          "printMultiplier": 1
         },
         "font": "Futura, Helvetica, sans-serif",
         "shape": "square"
@@ -29,11 +31,11 @@ window.onload = function() {
 
       $graph.awesomeCloud(settings);
 
+      console.log('finished');
     })
     .fail(function(jqXHR, textStatus) {
       console.log(textStatus);
     });
-
 
 
 };
