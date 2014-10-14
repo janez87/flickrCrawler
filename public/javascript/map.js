@@ -13,6 +13,7 @@ function addInfoWindow(map, marker, message) {
 
 window.onload = function() {
 
+  console.log('Getting the images');
 
   $.ajax('http://localhost:3000/imagesLocation')
     .done(function(result) {
