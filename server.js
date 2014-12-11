@@ -33,7 +33,7 @@ app.get('/images', function(req, res) {
       id: 'asc'
     })
     .exec(function(err, result) {
-      if (err) res.send(err);
+      if (err) return res.send(err);
 
       if (!_.isArray(result)) result = [result];
 
@@ -194,7 +194,7 @@ app.get('/images/:id', function(req, res) {
   var id = req.params.id;
   Image
     .findById(id, function(err, image) {
-      if (err) res.send(err);
+      if (err) return res.send(err);
 
       res.json(image);
     });
@@ -335,7 +335,7 @@ app.get('/locations', function(req, res) {
   }];
   Image.collection
     .aggregate(query, function(err, result) {
-      if (err) res.send(err);
+      if (err) return res.send(err);
 
       res.json(result);
     });
