@@ -1,0 +1,12 @@
+.modal.fade(id="asd")
+ .modal-dialog
+  .modal-content
+    .modal-header
+        button(type="button" class="close" data-dismiss="modal")
+          span(aria-hidden="true") Close
+      .modal-body
+        .images
+        each v,k in images
+          img(src=v.url_sq alt="immagine" id=v._id data-toggle="modal" href="#test_modal")
+      .modal-footer
+        button(type="button" class="btn btn-default" data-dismiss="modal") Close

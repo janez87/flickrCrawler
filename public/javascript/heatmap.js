@@ -2,7 +2,7 @@ var heatmap;
 window.onload = function() {
 
 
-  $.ajax('http://localhost:3000/imagesLocation')
+  $.ajax('/imagesLocation')
     .done(function(result) {
 
       var $map = $('#map');

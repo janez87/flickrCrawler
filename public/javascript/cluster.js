@@ -14,7 +14,7 @@
 window.onload = function() {
 
 
-  $.ajax('http://localhost:3000/cluster')
+  $.ajax('cluster')
     .done(function(result) {
 
       var $map = $('#map');

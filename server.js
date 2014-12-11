@@ -95,9 +95,70 @@ app.get('/cluster', function(req, res) {
     });
 });
 
+var swap = function(array) {
+
+  var a = [];
+
+  a[0] = array[1];
+  a[1] = array[0];
+
+  return a;
+
+}
+
+app.get('/locationDetails', function(req, res) {
+
+  var bottomLeft = req.param('sw').map(Number);
+  var topRight = req.param('ne').map(Number);
+  var topLeft = [topRight[0], bottomLeft[1]].map(Number);
+  var bottomRight = [bottomLeft[0], topRight[1]].map(Number);
+
+  bottomLeft = swap(bottomLeft);
+  bottomRight = swap(bottomRight);
+  topLeft = swap(topLeft);
+  topRight = swap(topRight);
+
+  console.log(bottomLeft);
+  console.log(bottomRight);
+  console.log(topRight);
+  console.log(topLeft);
+
+  Image
+    .find({
+      loc: {
+        $geoWithin: {
+          $geometry: {
+            type: 'Polygon',
+            coordinates: [
+              [bottomLeft, bottomRight, topRight, topLeft, bottomLeft]
+            ]
+          }
+        }
+      }
+    })
+    .exec(function(err, result) {
+      if (err) {
+        console.log(err);
+        return res.send(err);
+      }
+
+      console.log('Sending the images');
+
+      console.log(result.length);
+      console.log(result);
+
+      return res.render('detailGallery.jade', {
+        images: result
+      });
+    });
+
+
+});
+
+
 app.get('/imagesLocation', function(req, res) {
 
-  var query = {
+  /*var query = {
     loc: {
       $geoWithin: {
         $centerSphere: [
@@ -105,7 +166,7 @@ app.get('/imagesLocation', function(req, res) {
         ]
       }
     }
-  };
+  };*/
 
   var projection = {
     url_sq: 1,
@@ -204,7 +265,7 @@ app.get('/tags', function(req, res) {
           if (!count[tag]) {
             count[tag] = 1;
           } else {
-            count[tag]++;
+            count[tag] ++;
           }
         }
       }
@@ -230,9 +291,9 @@ app.get('/tags', function(req, res) {
       console.log(min);
       console.log(max);
       console.log(avg);
-      for (var k in count) {
-        count[k] = normalize(min, max, lmin, lmax, count[k]);
-      }
+      /* for (var k in count) {
+         count[k] = normalize(min, max, lmin, lmax, count[k]);
+       }*/
 
       res.json(count);
     });
@@ -292,7 +353,7 @@ app.get('/viewClusters', function(req, res) {
   res.render('cluster.jade');
 });
 
-app.listen(3000, function() {
+app.listen(3001, function() {
 
   console.log('Connecting to mongo');
   mongoose.connect(conf.db);

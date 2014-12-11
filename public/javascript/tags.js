@@ -1,7 +1,7 @@
 window.onload = function() {
 
 
-  $.ajax('http://localhost:3000/tags')
+  $.ajax('tags')
     .done(function(result) {
 
       console.log(result);
