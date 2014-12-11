@@ -44,13 +44,13 @@ function drawBox(v1, v2, map) {
         modal.modal('show');
 
         console.log(modal);
-        rectangle.setMap(null)
+        rectangle.setMap(null);
         rectangle = null;
 
       })
       .fail(function() {
         console.log('nope');
-      })
+      });
   });
 }
 

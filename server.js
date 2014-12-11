@@ -19,6 +19,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/images', function(req, res) {
 
+  console.log('images endpoint');
   //var Image = server.Image;
 
   var perPage = 100;
@@ -45,6 +46,7 @@ app.get('/images', function(req, res) {
 
 app.get('/cluster', function(req, res) {
 
+  console.log('cluster endpoint');
   Image
     .find({
       loc: {
@@ -104,10 +106,11 @@ var swap = function(array) {
 
   return a;
 
-}
+};
 
 app.get('/locationDetails', function(req, res) {
 
+  console.log('locationdeatils endpoint');
   var bottomLeft = req.param('sw').map(Number);
   var topRight = req.param('ne').map(Number);
   var topLeft = [topRight[0], bottomLeft[1]].map(Number);
@@ -158,6 +161,7 @@ app.get('/locationDetails', function(req, res) {
 
 app.get('/imagesLocation', function(req, res) {
 
+  console.log('images location endpoint');
   /*var query = {
     loc: {
       $geoWithin: {
@@ -198,6 +202,7 @@ app.get('/images/:id', function(req, res) {
 
 app.get('/tags', function(req, res) {
 
+  console.log('tags endpoint');
   var normalize = function(min, max, lmin, lmax, x) {
     //return Number(((x - min) / (max - min)).toFixed(4));
     return (Math.log(x) / Math.log(2)).toFixed(2);
@@ -302,6 +307,7 @@ app.get('/tags', function(req, res) {
 
 app.get('/locations', function(req, res) {
 
+  console.log('location endpoint');
   var query = [{
     $match: {
       loc: {
